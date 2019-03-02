@@ -1,0 +1,17 @@
+Google, 1123,
+Apple Inc., 175.42,
+FedEx Corp., 182.15,
+Facebook Inc., 165.55,
+Twitter Inc., 32.45,
+Tesla Inc., 302.17,
+AT&T, 31.14,
+Verizon Communications Inc., 56.72,
+Edward Lifesciences Corp., 170.66,
+Microsoft Corp., 111.97,
+
+
+
+
+
+
+
