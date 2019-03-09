@@ -29,7 +29,7 @@ public:
 	int getNumberOfShares() { return numberOfShares; }
 	void setNumberOfShares(int shares) { numberOfShares += shares; }
 
-	//custumer name getter-setter
+	//customer name getter-setter
 	string getCustomerName() { return customerName; }
 	void setCutomername(string n) { customerName = n; }
 
@@ -91,7 +91,7 @@ void buyShares(vector<Shareholder>& customers, Shareholder customer, Company coB
 string removeEnter(string str1);
 Shareholder getData(), findPerson(vector<Shareholder>& customers, string, int& index);
 Company findCompany(string name, Company shares[]);
-void showCustomer(Shareholder), restart(vector<Shareholder>& customers, Company shares[]);
+void showCustomer(Shareholder), restart(vector<Shareholder>& customers, Company shares[]), showOptions();
 
 int main() {
 	Company shares[NUM_OF_COMPANIES];
@@ -111,7 +111,7 @@ int main() {
 
 	// Displays start menu
 	cout << "Investment Virtual Assistant! ALL USER INFORMATION MUST BE EXACT!\n";
-	cout << " 1. Add new customer. \n 2. View shares.\n 3. Buy Stock\n 4. Display a customer's information. (Must have at least one customer made!) \n 5. Deposit Funds To Account.\n 6. Withdraw Funds From Account.\n Your Choice: ";
+	showOptions();
 	cin >> userChoice;
 	showMenu(userChoice, customers, shares);
 
@@ -158,7 +158,7 @@ Shareholder getData() {
 	cout << endl << "Enter account number: ";
 	cin >> accountNum;
 
-	cout << endl << "Default starting balance: $10,000";
+	cout << endl << "Default starting balance: $10,000\n";
 
 	return Shareholder(name, accountNum,10000);
 }
@@ -234,7 +234,7 @@ void showMenu(int choice, vector<Shareholder> customers, Company shares[]) {
 
 		selectedCustomer = findPerson(customers, name, index);
 		selectedCustomer.deposit(dollarAmount);
-		cout << "Curent balance now is of: " << selectedCustomer.getAvailableBal();
+		cout << "Curent balance now is of: " << selectedCustomer.getAvailableBal() << endl;
 		restart(customers, shares);
 		break;
 	case 6:
@@ -247,7 +247,7 @@ void showMenu(int choice, vector<Shareholder> customers, Company shares[]) {
 
 		selectedCustomer = findPerson(customers, name, index);
 		cout << selectedCustomer.withdraw(dollarAmount);
-		cout << "Curent balance now is of: " << selectedCustomer.getAvailableBal();
+		cout << "Curent balance now is of: " << selectedCustomer.getAvailableBal() << endl;
 		restart(customers, shares);
 		break;
 	default:
@@ -286,14 +286,14 @@ void buyShares(vector<Shareholder>& customers, Shareholder customer, Company coB
 	double transationTotal;
 
 	if (customer.getCustomerName() == "NULL_USER") {
-		cout << "User does not exist in database. Make sure it spelled correctly!";
+		cout << "User does not exist in database. Make sure it spelled correctly!\n";
 		return;
 	}
 
 	transationTotal = (coBuying.pricePerShare * numOfSharesBuying);
 
 	if (customer.getAvailableBal() < transationTotal) {
-		cout << "You do not have enough funds to purchase disired stock.";
+		cout << "You do not have enough funds to purchase disired stock.\n";
 		exit(0);
 	}
 	else {
@@ -303,7 +303,7 @@ void buyShares(vector<Shareholder>& customers, Shareholder customer, Company coB
 		cout << customers[index].withdraw(transationTotal);
 		customers[index].setNumberOfShares(numOfSharesBuying);
 
-		cout << "\nBought " << numOfSharesBuying << " shares from " << coBuying.name << " for $" << coBuying.pricePerShare << " each.";
+		cout << "\nBought " << numOfSharesBuying << " shares from " << coBuying.name << " for $" << coBuying.pricePerShare << " each.\n";
 	}
 
 }
@@ -323,7 +323,7 @@ Company findCompany(string name, Company shares[]) {
 
 	}
 
-	cout << "Company not found. ERROR!";
+	cout << "Company not found. ERROR!\n";
 	exit(0);
 }
 
@@ -333,13 +333,17 @@ void showCustomer(Shareholder customer) {
 	cout << "\n  Company Invested In: " << customer.getInvestmentCompany();
 	cout << "\n    Number of Shares: " << customer.getNumberOfShares();
 	cout << "\n  Available Balance: " << customer.getAvailableBal();
-	cout << "\n  Amount Invested: " << customer.getAmountInvested();
+	cout << "\n  Amount Invested: " << customer.getAmountInvested() << endl;
+}
+void showOptions() {
+	cout << "\n 1. Add new customer. \n 2. View shares.\n 3. Buy Stock\n 4. Display a customer's information. (Must have at least one customer made!) \n 5. Deposit Funds To Account.\n 6. Withdraw Funds From Account.\n Your Choice: ";
 }
 
 void restart(vector<Shareholder>& customers, Company shares[]) {
 	int userChoice;
-	cout << "\n\n 1. Add new customer. \n 2. View shares.\n 3. Buy Stock\n 4. Display a customer's information. (Must have at least one customer made!) \n Your Choice: ";
+	showOptions();
 	cin.ignore();
 	cin >> userChoice;
+
 	showMenu(userChoice, customers, shares);
 }
