@@ -3,40 +3,37 @@
 #include <fstream>
 #include <vector>
 
-//#include "Shareholder.h"
-//#include "Share.h"
-
-#include "Shareholder.cpp"
-#include "Share.cpp"
-
+#include "Shareholder.h"
+#include "Share.h"
 
 using namespace std;
 
 const int NUM_OF_COMPANIES = 10;
 
-struct Company {
-	string name;
-	double pricePerShare;
-};
 
-
-void storeCompanyInfo(Company shares[]), showMenu(int choice, vector<Shareholder> customers, Company[]), showShares(Company shares[]);
-void buyShares(vector<Shareholder>& customers, Shareholder customer, Company coBuying, int numOfSharesBuying, int index);
+void storeCompanyInfo(Share shares[]), showMenu(int choice, vector<Shareholder> customers, Share[]), showShares(Share shares[]);
+void buyShares(vector<Shareholder>& customers, Shareholder customer, Share coBuying, int numOfSharesBuying, int index);
 string removeEnter(string str1);
 Shareholder getData(), findPerson(vector<Shareholder>& customers, string, int& index);
-Company findCompany(string name, Company shares[]);
-void showCustomer(Shareholder), restart(vector<Shareholder>& customers, Company shares[]), showOptions();
+Share findCompany(string name, Share shares[]);
+void showCustomer(Shareholder), restart(vector<Shareholder>& customers, Share shares[]), showOptions();
 
 int main() {
-	Company shares[NUM_OF_COMPANIES];
+	Share shares[NUM_OF_COMPANIES];
+
+	Share *shares2 = new Share[NUM_OF_COMPANIES];
+
+
 	vector<Shareholder> customers;
 	int userChoice;
 
+	
+
 	// Store shares into shares array
-	storeCompanyInfo(shares);
+	storeCompanyInfo(shares2);
 
 	// Init's NULL USER
-	Shareholder NULL_USER = Shareholder("NULL_USER", 0, 10000);
+	const Shareholder NULL_USER = Shareholder("NULL_USER", 0, 10000);
 	customers.push_back(NULL_USER);
 
 	// Init Test User
@@ -51,7 +48,7 @@ int main() {
 	system("pause>nul");
 }
 
-void storeCompanyInfo(Company shares[]) {
+void storeCompanyInfo(Share shares2[]) {
 	ifstream inputFile;
 	inputFile.open("stockDataCPSC121.txt");
 
@@ -61,15 +58,14 @@ void storeCompanyInfo(Company shares[]) {
 	}
 
 	for (int i = 0; i < NUM_OF_COMPANIES; i++) {
-		Company co;
 		string price, name;
 		getline(inputFile, name, ',');
 
 		getline(inputFile, price, ',');
-		co.pricePerShare = stod(price);
-		co.name = removeEnter(name);
+		Share co = Share(removeEnter(name), stod(price));
+		
 
-		shares[i] = co;
+		shares2[i] = co;
 	}
 
 }
@@ -100,10 +96,10 @@ string removeEnter(string name) {
 	return str;
 }
 
-void showMenu(int choice, vector<Shareholder> customers, Company shares[]) {
+void showMenu(int choice, vector<Shareholder> customers, Share shares[]) {
 	string name, companyBuyingFrom, userName;
 	int numOfSharesBuying, index, dollarAmount;
-	Company coBuying;
+	Share coBuying;
 	Shareholder selectedCustomer;
 
 	switch (choice) {
@@ -128,14 +124,14 @@ void showMenu(int choice, vector<Shareholder> customers, Company shares[]) {
 		for (int i = 0; i < NUM_OF_COMPANIES; i++) {
 			coBuying = shares[i];
 
-			int found = coBuying.name.find(companyBuyingFrom);
+			int found = coBuying.getCompanyName().find(companyBuyingFrom);
 			if (found != string::npos) {
 				break;
 			}
 		}
 
 
-		cout << coBuying.name << " : " << coBuying.pricePerShare << ". How many shares is the customer purchasing?: ";
+		cout << coBuying.getCompanyName() << " : " << coBuying.getPricePerShare() << ". How many shares is the customer purchasing?: ";
 		cin >> numOfSharesBuying;
 
 		selectedCustomer = findPerson(customers, name, index);
@@ -183,10 +179,10 @@ void showMenu(int choice, vector<Shareholder> customers, Company shares[]) {
 	}
 }
 
-void showShares(Company shares[]) {
+void showShares(Share shares[]) {
 	for (int i = 0; i < NUM_OF_COMPANIES; i++) {
-		cout << "\n\n\n " << i + 1 << ". Company: " << shares[i].name;
-		cout << "\n\n     Price Per Share: $" << shares[i].pricePerShare;
+		cout << "\n\n\n " << i + 1 << ". Company: " << shares[i].getCompanyName();
+		cout << "\n\n     Price Per Share: $" << shares[i].getPricePerShare();
 	}
 }
 
@@ -209,7 +205,7 @@ Shareholder findPerson(vector<Shareholder>& customers, string nameOfPerson, int&
 }
 
 
-void buyShares(vector<Shareholder>& customers, Shareholder customer, Company coBuying, int numOfSharesBuying, int index) {
+void buyShares(vector<Shareholder>& customers, Shareholder customer, Share coBuying, int numOfSharesBuying, int index) {
 
 	double transationTotal;
 
@@ -218,7 +214,7 @@ void buyShares(vector<Shareholder>& customers, Shareholder customer, Company coB
 		return;
 	}
 
-	transationTotal = (coBuying.pricePerShare * numOfSharesBuying);
+	transationTotal = (coBuying.getPricePerShare() * numOfSharesBuying);
 
 	if (customer.getAvailableBal() < transationTotal) {
 		cout << "You do not have enough funds to purchase disired stock.\n";
@@ -226,23 +222,23 @@ void buyShares(vector<Shareholder>& customers, Shareholder customer, Company coB
 	}
 	else {
 
-		customers[index].setInvestmentCompany(coBuying.name);
+		customers[index].setInvestmentCompany(coBuying.getCompanyName());
 		customers[index].setAmountInvested(transationTotal);
 		cout << customers[index].withdraw(transationTotal);
 		customers[index].setNumberOfShares(numOfSharesBuying);
 
-		cout << "\nBought " << numOfSharesBuying << " shares from " << coBuying.name << " for $" << coBuying.pricePerShare << " each.\n";
+		cout << "\nBought " << numOfSharesBuying << " shares from " << coBuying.getCompanyName() << " for $" << coBuying.getPricePerShare() << " each.\n";
 	}
 
 }
 
-Company findCompany(string name, Company shares[]) {
+Share findCompany(string name, Share shares[]) {
 	int found;
 	string companyName;
 
 	for (int i = 0; i < NUM_OF_COMPANIES; i++) {
 
-		companyName = shares[i].name;
+		companyName = shares[i].getCompanyName();
 		found = companyName.find(name);
 
 		if (found != string::npos) {
@@ -267,7 +263,7 @@ void showOptions() {
 	cout << "\n 1. Add new customer. \n 2. View shares.\n 3. Buy Stock\n 4. Display a customer's information. (Must have at least one customer made!) \n 5. Deposit Funds To Account.\n 6. Withdraw Funds From Account.\n Your Choice: ";
 }
 
-void restart(vector<Shareholder>& customers, Company shares[]) {
+void restart(vector<Shareholder>& customers, Share shares[]) {
 	int userChoice;
 	showOptions();
 	cin.ignore();
